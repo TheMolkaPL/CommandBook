@@ -51,7 +51,7 @@ public class LocationUtil {
         byte free = 0;
 
         while (y <= world.getMaxHeight() + 2) {
-            if (BlockType.canPassThrough(world.getBlockTypeIdAt(x, y, z))) {
+            if (BlockType.canPassThrough(world.getBlockAt(x, y, z).getType().getId())) {
                 free++;
             } else {
                 free = 0;

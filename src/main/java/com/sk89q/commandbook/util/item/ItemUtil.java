@@ -22,8 +22,10 @@ import com.sk89q.commandbook.CommandBook;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.blocks.*;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.util.Random;
 
@@ -82,35 +84,12 @@ public class ItemUtil {
             name = parts[0];
         }
 
-
-
-        try {
-            id = Integer.parseInt(name);
-        } catch (NumberFormatException e) {
-            // First check the configurable list of aliases
-            Integer idTemp = CommandBook.inst().getItemNames().get(name.toLowerCase());
-
-            if (idTemp != null) {
-                id = idTemp;
-            } else {
-                // Then check WorldEdit
-                ItemType type = ItemType.lookup(name);
-
-                if (type == null) {
-                    throw new CommandException("No item type known by '" + name + "'");
-                }
-
-                id = type.getID();
-            }
+        Material mat = Material.matchMaterial(name);
+        if (mat == null) {
+            throw new CommandException("No item type known by '" + name + "'");
         }
 
-        // If the user specified an item data or damage value, let's try
-        // to parse it!
-        if (dataName != null) {
-            dmg = matchItemData(id, dataName);
-        }
-
-        ItemStack stack = new ItemStack(id, 1, (short)dmg);
+        ItemStack stack = new ItemStack(mat, 1, (short)dmg);
 
         if (enchantmentName != null) {
             String[] enchantments = enchantmentName.split(",");
@@ -152,7 +131,7 @@ public class ItemUtil {
      * @param infinite
      */
     public static void expandStack(ItemStack item, boolean infinite, boolean overrideStackSize) {
-        if (item == null || item.getAmount() == 0 || item.getTypeId() <= 0) {
+        if (item == null || item.getAmount() == 0 || item.getType().getId() <= 0) {
             return;
         }
 
@@ -213,45 +192,8 @@ public class ItemUtil {
                 } else {
                     throw new CommandException("Unknown slab material of '" + filter + "'.");
                 }
-            case BlockID.CLOTH:
-            case BlockID.STAINED_CLAY:
-            case BlockID.STAINED_GLASS:
-            case BlockID.STAINED_GLASS_PANE:
-                ClothColor col = ClothColor.lookup(filter);
-                if (col != null) {
-                    return col.getID();
-                }
-
-                throw new CommandException("Unknown wool color name of '" + filter + "'.");
-            case ItemID.INK_SACK: // Dye
-                ClothColor dyeCol = ClothColor.lookup(filter);
-                if (dyeCol != null) {
-                    return 15 - dyeCol.getID();
-                }
-
-                throw new CommandException("Unknown dye color name of '" + filter + "'.");
             default:
                 throw new CommandException("Invalid data value of '" + filter + "'.");
         }
-    }
-
-    /**
-     * Attempt to match a dye color for sheep wool.
-     *
-     * @param filter
-     * @return
-     * @throws CommandException
-     */
-    public static DyeColor matchDyeColor(String filter) throws CommandException {
-        if (filter.equalsIgnoreCase("random")) {
-            return DyeColor.getByData((byte) new Random().nextInt(15));
-        }
-        try {
-            DyeColor match = DyeColor.valueOf(filter.toUpperCase());
-            if (match != null) {
-                return match;
-            }
-        } catch (IllegalArgumentException ignored) {}
-        throw new CommandException("Unknown dye color name of '" + filter + "'.");
     }
 }

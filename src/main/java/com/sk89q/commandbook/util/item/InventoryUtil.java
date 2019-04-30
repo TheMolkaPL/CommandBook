@@ -33,8 +33,6 @@ public class InventoryUtil {
 
         int maxStackSize = overrideStackSize ? 64 : item.getType().getMaxStackSize();
 
-        component.checkAllowedItem(sender, item.getTypeId(), item.getDurability());
-
         // Check for invalid amounts
         if (amt == 0 || amt < -1) {
             throw new CommandException("Invalid item amount!");
@@ -59,7 +57,7 @@ public class InventoryUtil {
         if (targetQuantity > 1 || !targets.contains(sender)) {
             sender.sendMessage(ChatColor.YELLOW.toString() + targetQuantity + " player(s)"
                     + " have been given " + getAmountText(false, infinite, amt)
-                    + ' ' + ItemUtil.toItemName(item.getTypeId()) + '.');
+                    + ' ' + ItemUtil.toItemName(item.getType().getId()) + '.');
         }
 
 
@@ -84,7 +82,7 @@ public class InventoryUtil {
                         for (ItemStack stack : result) {
                             left += stack.getAmount();
                             sender.sendMessage(ChatColor.RED + getAmountText(true, infinite, left)
-                                    + ' ' + ItemUtil.toItemName(stack.getTypeId())
+                                    + ' ' + ItemUtil.toItemName(stack.getType().getId())
                                     + " could not be given to "
                                     + player.getName() + " (their inventory is probably full)!");
                         }
@@ -105,12 +103,12 @@ public class InventoryUtil {
             // Tell the user about the given item
             if (player.equals(sender)) {
                 player.sendMessage(ChatColor.YELLOW + "You've been given " + amtString + " "
-                        + ItemUtil.toItemName(item.getTypeId()) + ".");
+                        + ItemUtil.toItemName(item.getType().getId()) + ".");
             } else {
                 player.sendMessage(ChatColor.YELLOW + "Given from "
                         + ChatUtil.toColoredName(sender, ChatColor.YELLOW) + ": "
                         + amtString + " "
-                        + ItemUtil.toItemName(item.getTypeId()) + ".");
+                        + ItemUtil.toItemName(item.getType().getId()) + ".");
 
             }
         }
@@ -140,19 +138,19 @@ public class InventoryUtil {
 
 
         item.setAmount(amt);
-        if (target.getInventory().contains(item.getTypeId())) {
+        if (target.getInventory().contains(item.getType())) {
             target.getInventory().removeItem(item);
 
             target.sendMessage(ChatColor.YELLOW + "Taken from "
                     + ChatUtil.toColoredName(sender, ChatColor.YELLOW) + ": "
                     + amt + " "
-                    + ItemUtil.toItemName(item.getTypeId()) + ".");
+                    + ItemUtil.toItemName(item.getType().getId()) + ".");
 
             sender.sendMessage(ChatColor.YELLOW.toString() + amt + " "
-                    + ItemUtil.toItemName(item.getTypeId()) + " has been taken.");
+                    + ItemUtil.toItemName(item.getType().getId()) + " has been taken.");
         } else {
             sender.sendMessage(ChatColor.YELLOW.toString() + target.getName()
-                    + " has no " + ItemUtil.toItemName(item.getTypeId()) + ".");
+                    + " has no " + ItemUtil.toItemName(item.getType().getId()) + ".");
         }
     }
 }

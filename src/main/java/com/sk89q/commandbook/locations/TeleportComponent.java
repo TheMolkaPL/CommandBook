@@ -248,7 +248,7 @@ public class TeleportComponent extends BukkitComponent implements Listener {
             target.sendMessage(targetMessage);
         }
 
-        @Command(aliases = {"bring", "tphere", "grab", "g"}, usage = "<target>", desc = "Bring a player to you", min = 1, max = 1)
+        @Command(aliases = {"bring", "tphere", "grab", "g", "tpaccept"}, usage = "<target>", desc = "Bring a player to you", min = 1, max = 1)
         public void bring(CommandContext args, CommandSender sender) throws CommandException {
             Player player = PlayerUtil.checkPlayer(sender);
             Player target = null;
@@ -330,7 +330,7 @@ public class TeleportComponent extends BukkitComponent implements Listener {
             (new TeleportPlayerIterator(sender, loc)).iterate(targets);
         }
 
-        @Command(aliases = {"return", "ret"}, usage = "[player]", desc = "Teleport back to your last location", min = 0, max = 1)
+        @Command(aliases = {"return", "ret", "back"}, usage = "[player]", desc = "Teleport back to your last location", min = 0, max = 1)
         @CommandPermissions({"commandbook.return"})
         public void ret(CommandContext args, CommandSender sender) throws CommandException {
             Player player;

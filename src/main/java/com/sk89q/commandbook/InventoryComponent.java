@@ -72,48 +72,6 @@ public class InventoryComponent extends BukkitComponent {
 
     // -- Helper methods
 
-    /**
-     * Checks to see if a user can use an item.
-     *
-     * @param sender
-     * @param id
-     * @throws CommandException
-     */
-    public void checkAllowedItem(CommandSender sender, int id, int damage)
-            throws CommandException {
-
-        if (Material.getMaterial(id) == null || id == 0) {
-            throw new CommandException("Non-existent item specified.");
-        }
-
-        // Check if the user has an override
-        if (CommandBook.inst().hasPermission(sender, "commandbook.override.any-item")) {
-            return;
-        }
-
-        boolean hasPermissions = CommandBook.inst().hasPermission(sender, "commandbook.items." + id)
-                || CommandBook.inst().hasPermission(sender, "commandbook.items." + id + "." + damage);
-
-        // Also check the permissions system
-        if (hasPermissions) {
-            return;
-        }
-
-        if (config.useItemPermissionsOnly) {
-            throw new CommandException("That item is not allowed.");
-        }
-
-        if (config.allowedItems.size() > 0) {
-            if (!config.allowedItems.contains(id)) {
-                throw new CommandException("That item is not allowed.");
-            }
-        }
-
-        if (config.disallowedItems.contains((id))) {
-            throw new CommandException("That item is disallowed.");
-        }
-    }
-
     private ItemStack matchItem(String name) throws CommandException {
         return ItemUtil.getCommandItem(name);
     }
@@ -414,8 +372,8 @@ public class InventoryComponent extends BukkitComponent {
 
                         // Same type?
                         // Blocks store their color in the damage value
-                        if (item2.getTypeId() == item.getTypeId() &&
-                                ((!ItemType.usesDamageValue(item.getTypeId()) && ignoreDamaged)
+                        if (item2.getType().getId() == item.getType().getId() &&
+                                ((!ItemType.usesDamageValue(item.getType().getId()) && ignoreDamaged)
                                         || item.getDurability() == item2.getDurability()) &&
                                     ((item.getItemMeta() == null && item2.getItemMeta() == null)
                                             || (item.getItemMeta() != null &&
@@ -476,14 +434,14 @@ public class InventoryComponent extends BukkitComponent {
 
                 if (!repairAll && !repairHotbar && !repairEquipment) {
                     ItemStack stack = player.getItemInHand();
-                    if (stack != null && !ItemType.usesDamageValue(stack.getTypeId())) {
+                    if (stack != null && !ItemType.usesDamageValue(stack.getType().getId())) {
                         stack.setDurability((short) 0);
                     }
                 } else {
                     if (repairAll || repairHotbar) {
                         for (int i = (repairAll ? 36 : 8); i >= 0; --i) {
                             ItemStack stack = inventory.getItem(i);
-                            if (stack != null && !ItemType.usesDamageValue(stack.getTypeId())) {
+                            if (stack != null && !ItemType.usesDamageValue(stack.getType().getId())) {
                                 stack.setDurability((short) 0);
                             }
                         }
@@ -493,7 +451,7 @@ public class InventoryComponent extends BukkitComponent {
                         // Armor slots
                         for (int i = 36; i <= 39; i++) {
                             ItemStack stack = inventory.getItem(i);
-                            if (stack != null && !ItemType.usesDamageValue(stack.getTypeId())) {
+                            if (stack != null && !ItemType.usesDamageValue(stack.getType().getId())) {
                                 stack.setDurability((short) 0);
                             }
                         }
@@ -533,7 +491,7 @@ public class InventoryComponent extends BukkitComponent {
                 @Override
                 public String format(Enchantment entry) {
                     return ChatColor.BLUE + entry.getName().toUpperCase() + ChatColor.YELLOW
-                            + " (ID: " + ChatColor.WHITE + entry.getId() + ChatColor.YELLOW
+                            + " (ID: " + ChatColor.WHITE + entry.getKey().toString() + ChatColor.YELLOW
                             + ", Max Level: " + ChatColor.WHITE + entry.getMaxLevel() + ChatColor.YELLOW + ')';
                 }
             }.display(sender, Arrays.asList(Enchantment.values()), args.getFlagInteger('p', 1));

@@ -110,7 +110,7 @@ public class FunComponent extends BukkitComponent {
         if (creature instanceof Skeleton) {
             creature.getEquipment().setItemInHand(new ItemStack(Material.BOW));
         } else if (creature instanceof PigZombie) {
-            creature.getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD));
+            creature.getEquipment().setItemInHand(new ItemStack(Material.GOLDEN_SWORD));
         }
 
         String[] types = specialTypes.split(",");
@@ -143,13 +143,6 @@ public class FunComponent extends BukkitComponent {
                             ((Creeper) creature).setPowered(true);
                         }
                         break outerloop;
-                    case SHEEP:
-                        if (specialType.matches("(?i)shear(ed)?")) {
-                            ((Sheep) creature).setSheared(true);
-                        } else {
-                            ((Sheep) creature).setColor(ItemUtil.matchDyeColor(specialType));
-                        }
-                        continue;
                     case PIG:
                         if (specialType.matches("(?i)saddle(d)?")) {
                             ((Pig) creature).setSaddle(true);

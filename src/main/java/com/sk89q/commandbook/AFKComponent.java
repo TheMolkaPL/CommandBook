@@ -242,7 +242,8 @@ public class AFKComponent extends BukkitComponent implements Runnable, Listener 
                     // Grey out list name
                     String name = target.getName();
                     session.setLastTabName(target.getPlayerListName());
-                    target.setPlayerListName(ChatColor.GRAY + name.substring(0, Math.min(14, name.length())));
+                    String colors = ChatColor.GRAY + ChatColor.ITALIC.toString();
+                    target.setPlayerListName(colors + name.substring(0, Math.min(16 - colors.length(), name.length())));
 
                     // Mark the player as AFK
                     session.setAFK(true);
